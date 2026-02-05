@@ -1,0 +1,321 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Employee Database | SDL</title>
+</head>
+<body class="bg-slate-50 pt-20">
+    <div class="max-w-6xl mx-auto p-6">
+        <div class="flex justify-between items-end mb-8">
+            <div>
+                <h1 class="text-3xl font-bold text-slate-800">Employee Management</h1>
+                <p class="text-slate-500">Updating: employees.json</p>
+            </div>
+            <a href="{% url 'home' %}" class="bg-white border px-4 py-2 rounded-lg font-bold text-slate-600 hover:bg-slate-100 transition-all">Back to Portal</a>
+        </div>
+
+        <div class="bg-white rounded-3xl shadow-xl border border-slate-200 overflow-hidden mb-10">
+            <div class="bg-indigo-600 p-4">
+                <h3 class="text-white font-bold">Employee Details</h3>
+            </div>
+            <form method="POST" class="p-8">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="add">
+                <input type="hidden" name="editing_id" id="editingId" value="">
+                <div class="flex justify-between items-center md:col-span-4 border-b pb-2 mb-4">
+                        <span class="text-xs font-black uppercase text-indigo-500" id="formTitle">Add New Employee Record</span>
+                        <button type="button" id="cancelEdit" class="hidden text-xs font-bold text-red-500 underline">Cancel Edit</button>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div class="md:col-span-4 border-b pb-2"><span class="text-xs font-black uppercase text-indigo-500">Personal Details</span></div>
+                    <div class="flex flex-col">
+                    <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 ml-1">ID</label>
+                    <input type="text" name="emp_id_code" placeholder="ID"  autocomplete="off" required class="border-2 p-3 rounded-xl focus:border-indigo-500 outline-none">
+                    </div>
+                    <div class="flex flex-col">
+                    <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 ml-1">Name</label>
+                    <input type="text" name="name" placeholder="Full Name"  required autocomplete="off" class="border-2 p-3 rounded-xl focus:border-indigo-500 outline-none">
+                    </div>
+                    <div class="flex flex-col">
+                    <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 ml-1">Email</label>
+                    <input type="email" name="email" placeholder="Email" required autocomplete="off" class="border-2 p-3 rounded-xl focus:border-indigo-500 outline-none">
+                    </div>
+                    <div class="flex flex-col">
+                    <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 ml-1">PAN</label>
+                    <input type="text" name="pan" placeholder="PAN Number" class="border-2 p-3 rounded-xl focus:border-indigo-500 outline-none">
+                    </div>
+                    
+                    <div class="md:col-span-4 border-b pb-2 pt-4"><span class="text-xs font-black uppercase text-indigo-500">Work Details</span></div>
+                    <div class="flex flex-col">
+                    <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 ml-1">Department</label>
+                    <input type="text" name="department" placeholder="Department" required  autocomplete="off" class="border-2 p-3 rounded-xl">
+                    </div>
+                    <div class="flex flex-col">
+                    <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 ml-1">Designation</label>
+                    <input type="text" name="designation" placeholder="Designation" required autocomplete="off" class="border-2 p-3 rounded-xl">
+                    </div>
+                    <div class="flex flex-col">
+                    <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 ml-1">Date of Joining</label>
+                    <input type="date" 
+                           name="doj" 
+                           required 
+                           class="border-2 p-3 rounded-xl focus:border-indigo-500 outline-none bg-white text-slate-700">
+                    </div>
+                    <div class="flex flex-col">
+                    <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 ml-1">Employee Type</label>
+                    <select name="emp_type" class="border-2 p-3 rounded-xl focus:border-indigo-500 outline-none bg-white text-slate-500">
+                              <option value="" disabled selected>Employee Type</option>
+                              <option value="Permanent">Permanent</option>
+                              <option value="Contract">Contract</option>
+                              <option value="Intern">Intern</option>
+                    </select>
+                    </div>
+                    <div class="flex flex-col">
+                    <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 ml-1">Location</label>
+                    <input type="text" name="location" placeholder="Location" required autocomplete="off" class="border-2 p-3 rounded-xl">
+                    </div>
+                    <div class="flex flex-col">
+                    <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 ml-1">Month</label>
+                    <input type="text" name="month" placeholder="Month "  required autocomplete="off" class="border-2 p-3 rounded-xl">
+                    </div>
+
+                    <div class="md:col-span-4 border-b pb-2 pt-4"><span class="text-xs font-black uppercase text-indigo-500">Earnings & Deductions</span></div>
+                    <div class="flex flex-col">
+                    <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 ml-1">Basic Salary</label>
+                    <input type="text" inputmode="numeric" pattern="[0-9]*" name="basic" placeholder="Basic Salary" class="border-2 p-3 rounded-xl">
+                    </div>
+                    <div class="flex flex-col">
+                    <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 ml-1">HRA</label>
+                    <input type="text" inputmode="numeric" pattern="[0-9]*"name="hra" placeholder="HRA" class="border-2 p-3 rounded-xl">
+                    </div>
+                    <div class="flex flex-col">
+                    <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 ml-1">Income Tax</label>
+                    <input type="text" inputmode="numeric" pattern="[0-9]*"name="income_tax" placeholder="Income Tax" class="border-2 p-3 rounded-xl">
+                    </div>
+                    <div class="flex flex-col">
+                    <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 ml-1">Professional Tax</label>
+                    <input type="text" inputmode="numeric" pattern="[0-9]*"name="professional_tax" placeholder="Prof. Tax" class="border-2 p-3 rounded-xl">
+                    </div>
+                    <div class="flex flex-col">
+                    <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 ml-1">Additional Allowance</label>
+                    <input type="text" inputmode="numeric" pattern="[0-9]*" name="additional_allowance" placeholder="Additional allowance  " class="border-2 p-3 rounded-xl">
+                    </div>
+                    <div class="flex flex-col">
+                    <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 ml-1">Insurance</label>
+                    <input type="text" inputmode="numeric" pattern="[0-9]*"name="insurance" placeholder="Insurance " class="border-2 p-3 rounded-xl">
+                    </div>
+                   
+                </div>
+
+                <button type="submit" class="mt-8 w-full bg-indigo-600 text-white font-black py-4 rounded-2xl hover:bg-indigo-700 shadow-lg shadow-indigo-200 transition-all">
+                    SAVE TO DATABASE
+                </button>
+            </form>
+        </div>
+
+        <div class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden">
+            <table class="w-full text-left">
+                <thead class="bg-slate-50 border-b">
+                    <tr>
+                        <th class="p-4 text-xs font-bold text-slate-400">ID</th>
+                        <th class="p-4 text-xs font-bold text-slate-400">NAME</th>
+                        <th class="p-4 text-xs font-bold text-slate-400">DEPARTMENT</th>
+                        <th class="p-4 text-xs font-bold text-slate-400">BASIC</th>
+                        <th class="p-4 text-xs font-bold text-slate-400">ACTION</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for emp in employees %}
+                    <tr class="border-b hover:bg-slate-50">
+                        <td class="p-4 font-bold text-indigo-600">{{ emp.id }}</td>
+                        <td class="p-4 text-slate-700 font-medium">{{ emp.name }}</td>
+                        <!-- <td class="p-4 text-xs"> <span class="px-2 py-1 rounded-full {% if emp.emp_type == 'Permanent' %}bg-green-100 text-green-700{% else %}bg-amber-100 text-amber-700{% endif %} font-bold">
+                               {{ emp.emp_type }}
+                                   </span>
+                         </td> -->
+                        <td class="p-4 text-slate-500">{{ emp.department }}</td>
+                        <td class="p-4 text-slate-700">₹{{ emp.basic }}</td>
+                        <td class="p-4">
+    <div class="flex items-center gap-4">
+        <button type="button" 
+                onclick="openViewModal({ 
+                    id: '{{ emp.id }}', 
+                    name: '{{ emp.name }}', 
+                    email: '{{ emp.email }}', 
+                    pan: '{{ emp.pan }}', 
+                    dept: '{{ emp.department }}', 
+                    desig: '{{ emp.designation }}', 
+                    doj: '{{ emp.doj }}', 
+                    type: '{{ emp.emp_type }}', 
+                    loc: '{{ emp.location }}', 
+                    month: '{{ emp.month }}', 
+                    basic: '{{ emp.basic }}', 
+                    hra: '{{ emp.hra }}', 
+                    tax: '{{ emp.income_tax }}', 
+                    ptax: '{{ emp.professional_tax }}', 
+                    allow: '{{ emp.additional_allowance }}', 
+                    ins: '{{ emp.insurance }}' 
+                })" 
+                class="bg-slate-100 text-slate-600 px-3 py-1 rounded-md hover:bg-slate-200 font-bold transition-all text-sm">
+            View
+        </button>
+
+        <button type="button" 
+                onclick="editEmployee({ 
+                    id: '{{ emp.id }}', 
+                    name: '{{ emp.name }}', 
+                    email: '{{ emp.email }}', 
+                    pan: '{{ emp.pan }}', 
+                    dept: '{{ emp.department }}', 
+                    desig: '{{ emp.designation }}', 
+                    doj: '{{ emp.doj }}', 
+                    type: '{{ emp.emp_type }}', 
+                    loc: '{{ emp.location }}', 
+                    month: '{{ emp.month }}', 
+                    basic: '{{ emp.basic }}', 
+                    hra: '{{ emp.hra }}', 
+                    tax: '{{ emp.income_tax }}', 
+                    ptax: '{{ emp.professional_tax }}', 
+                    allow: '{{ emp.additional_allowance }}', 
+                    ins: '{{ emp.insurance }}' 
+                })" 
+                class="text-indigo-600 hover:text-indigo-800 font-bold text-sm">
+            Edit
+        </button>
+
+        <form method="POST" class="inline m-0" onsubmit="return confirm('Delete this record?')">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="delete">
+            <input type="hidden" name="emp_id" value="{{ emp.id }}">
+            <button type="submit" class="text-red-500 hover:text-red-700 font-bold text-sm">
+                Delete
+            </button>
+        </form>
+    </div>
+</td>
+      
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+<div id="viewModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-2xl w-full overflow-hidden">
+        <div class="bg-slate-800 p-6 flex justify-between items-center text-white">
+            <h2 class="text-xl font-bold">Employee Full Profile</h2>
+            <button onclick="closeModal()" class="text-slate-400 hover:text-white">&times; Close</button>
+        </div>
+        
+        <div class="p-8 grid grid-cols-2 gap-4 text-sm" id="modalContent">
+            </div>
+
+        <div class="bg-slate-50 p-6 border-t flex justify-end gap-3">
+            <button onclick="closeModal()" class="px-6 py-2 font-bold text-slate-500">Close</button>
+            <button id="modalEditBtn" class="bg-indigo-600 text-white px-8 py-2 rounded-xl font-bold hover:bg-indigo-700">
+                Proceed to Edit
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+// 1. GLOBAL STATE
+let currentEmployeeData = null; 
+
+// 2. EDIT FUNCTION
+function editEmployee(data) {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    
+    // Update Hidden Inputs
+    document.getElementsByName('action')[0].value = 'edit';
+    document.getElementById('editingId').value = data.id;
+    
+    // Update UI Labels
+    document.getElementById('formTitle').innerText = "Editing: " + data.name;
+    
+    // Show Cancel Button
+    const cancelBtn = document.getElementById('cancelEdit');
+    if(cancelBtn) cancelBtn.classList.remove('hidden');
+    
+    // Change Submit Button Style
+    const submitBtn = document.querySelector('button[type="submit"]');
+    submitBtn.innerText = "UPDATE RECORD IN DATABASE";
+    submitBtn.classList.replace('bg-indigo-600', 'bg-emerald-600');
+
+    // Fill all inputs by Name attribute
+    document.querySelector('[name="emp_id_code"]').value = data.id;
+    document.querySelector('[name="name"]').value = data.name;
+    document.querySelector('[name="email"]').value = data.email;
+    document.querySelector('[name="pan"]').value = data.pan;
+    document.querySelector('[name="department"]').value = data.dept;
+    document.querySelector('[name="designation"]').value = data.desig;
+    document.querySelector('[name="doj"]').value = data.doj;
+    document.querySelector('[name="emp_type"]').value = data.type;
+    document.querySelector('[name="location"]').value = data.loc;
+    document.querySelector('[name="month"]').value = data.month;
+    document.querySelector('[name="basic"]').value = data.basic;
+    document.querySelector('[name="hra"]').value = data.hra;
+    document.querySelector('[name="income_tax"]').value = data.tax;
+    document.querySelector('[name="professional_tax"]').value = data.ptax;
+    document.querySelector('[name="additional_allowance"]').value = data.allow;
+    document.querySelector('[name="insurance"]').value = data.ins;
+}
+
+// 3. RESET FUNCTION
+function resetForm() {
+    const form = document.querySelector('form'); // Selects your main form
+    form.reset();
+    document.getElementsByName('action')[0].value = 'add';
+    document.getElementById('formTitle').innerText = "Add New Employee Record";
+    document.getElementById('cancelEdit').classList.add('hidden');
+    
+    const submitBtn = document.querySelector('button[type="submit"]');
+    submitBtn.innerText = "SAVE TO DATABASE";
+    submitBtn.classList.replace('bg-emerald-600', 'bg-indigo-600');
+}
+
+// 4. VIEW MODAL LOGIC
+function openViewModal(data) {
+    currentEmployeeData = data;
+    const modal = document.getElementById('viewModal');
+    const content = document.getElementById('modalContent');
+    
+    // Display all data with clean white background
+    content.innerHTML = `
+        <div class="border-b pb-2"><p class="text-slate-400 uppercase text-[10px] font-black">Full Name</p><p class="font-bold text-lg text-slate-800">${data.name}</p></div>
+        <div class="border-b pb-2"><p class="text-slate-400 uppercase text-[10px] font-black">Employee ID</p><p class="font-bold text-lg text-indigo-600">${data.id}</p></div>
+        <div class="border-b pb-2"><p class="text-slate-400 uppercase text-[10px] font-black">Email</p><p class="font-medium">${data.email}</p></div>
+        <div class="border-b pb-2"><p class="text-slate-400 uppercase text-[10px] font-black">Department</p><p class="font-medium">${data.dept}</p></div>
+        <div class="border-b pb-2"><p class="text-slate-400 uppercase text-[10px] font-black">Designation</p><p class="font-medium">${data.desig}</p></div>
+        <div class="border-b pb-2"><p class="text-slate-400 uppercase text-[10px] font-black">Joining Date</p><p class="font-medium">${data.doj}</p></div>
+        <div class="border-b pb-2"><p class="text-slate-400 uppercase text-[10px] font-black">Basic Salary</p><p class="font-bold">₹${data.basic}</p></div>
+        <div class="border-b pb-2"><p class="text-slate-400 uppercase text-[10px] font-black">PAN</p><p class="font-medium">${data.pan || 'N/A'}</p></div>
+        <div class="border-b pb-2"><p class="text-slate-400 uppercase text-[10px] font-black">HRA</p><p class="font-medium">₹${data.hra}</p></div>
+        <div class="border-b pb-2"><p class="text-slate-400 uppercase text-[10px] font-black">Allowance</p><p class="font-medium">₹${data.allow}</p></div>
+        <div class="border-b pb-2"><p class="text-slate-400 uppercase text-[10px] font-black">Tax</p><p class="font-medium">₹${data.tax}</p></div>
+        <div class="border-b pb-2"><p class="text-slate-400 uppercase text-[10px] font-black">Insurance</p><p class="font-medium ">₹${data.ins}</p></div>
+    `;
+
+    // Connect the "Proceed to Edit" button correctly to editEmployee
+    document.getElementById('modalEditBtn').onclick = function() {
+        closeModal();
+        editEmployee(currentEmployeeData); 
+    };
+
+    modal.classList.remove('hidden');
+}
+
+function closeModal() {
+    document.getElementById('viewModal').classList.add('hidden');
+}
+
+// Attach Reset to Cancel Button
+document.getElementById('cancelEdit').onclick = resetForm;
+</script>
+
+
+</body>
+</html>
